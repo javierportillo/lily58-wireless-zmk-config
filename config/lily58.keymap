@@ -10,23 +10,82 @@
 #include <dt-bindings/zmk/ext_power.h>
 
 / {
+    behaviors {
+        sqtnder: single_quote_underscore {
+            compatible = "zmk,behavior-mod-morph";
+            #binding-cells = <0>;
+            bindings = <&kp SQT>, <&kp UNDER>;
+            mods = <(MOD_LSFT|MOD_RSFT)>;
+        };
+        cmaqtm: comma_question_mark {
+            compatible = "zmk,behavior-mod-morph";
+            #binding-cells = <0>;
+            bindings = <&kp COMMA>, <&kp QUESTION>;
+            mods = <(MOD_LSFT|MOD_RSFT)>;
+        };
+        mindblq: minus_double_quote {
+            compatible = "zmk,behavior-mod-morph";
+            #binding-cells = <0>;
+            bindings = <&kp MINUS>, <&kp DOUBLE_QUOTES>;
+            mods = <(MOD_LSFT|MOD_RSFT)>;
+        };
+        slshlst: slash_less_than {
+            compatible = "zmk,behavior-mod-morph";
+            #binding-cells = <0>;
+            bindings = <&kp SLASH>, <&kp LESS_THAN>;
+            mods = <(MOD_LSFT|MOD_RSFT)>;
+        };
+        tdc: tap_dance_caps {
+            compatible = "zmk,behavior-tap-dance";
+            #binding-cells = <0>;
+            tapping-term-ms = <200>;
+            bindings = <&caps_word>, <&kp CAPS>;
+        };
+        tdbs: tap_dance_backspace {
+            compatible = "zmk,behavior-tap-dance";
+            #binding-cells = <0>;
+            tapping-term-ms = <200>;
+            bindings = <&kp BSPC>, <&kp LC(BSPC)>;
+        };
+        tddel: tap_dance_delete {
+            compatible = "zmk,behavior-tap-dance";
+            #binding-cells = <0>;
+            tapping-term-ms = <200>;
+            bindings = <&kp DEL>, <&kp LC(DEL)>;
+        };
+        bspcdel: backspace_delete {
+            compatible = "zmk,behavior-mod-morph";
+            #binding-cells = <0>;
+            bindings = <&tdbs>, <&tddel>;
+            mods = <(MOD_LSFT|MOD_RSFT)>;
+        };
+        tdgui: tap_dance_gui {
+            compatible = "zmk,behavior-mod-morph";
+            #binding-cells = <0>;
+            bindings = <&kp LGUI>, <&kp LC(LGUI)>;
+            mods = <(MOD_LSFT|MOD_RSFT)>;
+        };
+    };
     keymap {
         compatible = "zmk,keymap";
 
         default_layer {
+
+// GRAPHITE LAYOUT
 // ------------------------------------------------------------------------------------------------------------
-// |  ESC  |  1  |  2  |  3   |  4   |  5   |                   |  6   |  7    |  8    |  9   |   0   |   `   |
-// |  TAB  |  Q  |  W  |  E   |  R   |  T   |                   |  Y   |  U    |  I    |  O   |   P   |   -   |
-// |  CTRL |  A  |  S  |  D   |  F   |  G   |                   |  H   |  J    |  K    |  L   |   ;   |   '   |
-// | SHIFT |  Z  |  X  |  C   |  V   |  B   |   "["  |  |  "]"  |  N   |  M    |  ,    |  .   |   /   | SHIFT |
-//                     | ALT  | GUI  | LOWER|  SPACE |  | ENTER | RAISE| BSPC  | GUI   |
+// | GRAVE | 1 | 2 | 3   | 4    | 5     |           | |            | 6     | 7        | 8   | 9 | 0 | CAPS  |
+// | TAB   | B | L | D   | W    | Z     |           | |            | '     | F        | I   | O | J | ;     |
+// | ESC   | N | R | T   | S    | G     |           | |            | Y     | H        | A   | E | I | ,     |
+// | SHIFT | Q | X | M   | C    | V     | HOME      | | END        | K     | P        | .   | - | / | SHIFT |
+// |       |   |   | ALT | RALT | LOWER | SPACE/MEH | | ENTER/CTRL | RAISE | BSPC/DEL | GUI |   |   |       |
+
             display-name = "Base";
             bindings = <
-&kp ESC   &kp N1 &kp N2 &kp N3   &kp N4   &kp N5                     &kp N6 &kp N7   &kp N8    &kp N9  &kp N0   &kp GRAVE
-&kp TAB   &kp Q  &kp W  &kp E    &kp R    &kp T                      &kp Y  &kp U    &kp I     &kp O   &kp P    &kp MINUS
-&kp LCTRL &kp A  &kp S  &kp D    &kp F    &kp G                      &kp H  &kp J    &kp K     &kp L   &kp SEMI &kp SQT
-&kp LSHFT &kp Z  &kp X  &kp C    &kp V    &kp B  &kp LBKT   &kp RBKT &kp N  &kp M    &kp COMMA &kp DOT &kp FSLH &kp RSHFT
-                        &kp LALT &kp LGUI &mo 1  &kp SPACE  &kp RET  &mo 2  &kp BSPC &kp RGUI
+&kp GRAVE &kp N1 &kp N2 &kp N3   &kp N4   &kp N5                                        &kp N6    &kp N7   &kp N8    &kp N9   &kp N0   &tdc
+&kp TAB   &kp B  &kp L  &kp D    &kp W    &kp Z                                         &sqtnder  &kp F    &kp O     &kp U    &kp J    &kp SEMI
+&kp ESC   &kp N  &kp R  &kp T    &kp S    &kp G                                         &kp Y     &kp H    &kp A     &kp E    &kp I    &cmaqtm
+&kp LSHFT &kp Q  &kp X  &kp M    &kp C    &kp V  &kp HOME                &kp END        &kp K     &kp P    &kp DOT   &mindblq &slshlst &kp RSHFT
+                        &kp LALT &kp RALT &to 1  &mt LC(LA(LSHFT) SPACE  &mt LCTRL RET  &to 2     &bspdel  &tdgui
             >;
 
             sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN>;
@@ -45,7 +104,7 @@
 &kp F1     &kp F2           &kp F3            &kp F4            &kp F5       &kp F6                       &kp F7    &kp F8    &kp F9          &kp F10   &kp F11   &kp F12
 &kp GRAVE  &kp EXCL         &kp AT            &kp HASH          &kp DOLLAR   &kp PRCNT                    &kp CARET &kp AMPS  &kp KP_MULTIPLY &kp LPAR  &kp RPAR  &kp TILDE
 &trans     &trans           &trans            &trans            &trans       &trans    &trans   &trans    &trans    &kp MINUS &kp KP_PLUS     &kp LBRC  &kp RBRC  &kp PIPE
-                                              &trans            &trans       &trans    &trans   &trans    &trans    &trans    &trans
+                                              &trans            &trans       &trans    &trans   &trans    &to 0     &trans    &trans
             >;
 
             sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN>;
@@ -64,7 +123,7 @@
 &kp GRAVE &kp N1 &kp N2 &kp N3  &kp N4  &kp N5                       &kp N6      &kp N7    &kp N8    &kp N9   &kp N0    &trans
 &kp F1    &kp F2 &kp F3 &kp F4  &kp F5  &kp F6                       &trans      &kp LEFT  &kp DOWN  &kp UP   &kp RIGHT &trans
 &kp F7    &kp F8 &kp F9 &kp F10 &kp F11 &kp F12   &trans   &trans    &kp KP_PLUS &kp MINUS &kp EQUAL &kp LBKT &kp RBKT  &kp BSLH
-                        &trans  &trans  &trans    &trans   &trans    &trans      &trans    &trans
+                        &trans  &trans  &trans    &trans   &trans    &to 0       &trans    &trans
             >;
 
             sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN>;
