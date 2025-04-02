@@ -85,7 +85,7 @@
 &kp TAB   &kp B  &kp L  &kp D    &kp W    &kp Z                                          &sqtnder  &kp F    &kp O     &kp U    &kp J    &kp SEMI
 &kp ESC   &kp N  &kp R  &kp T    &kp S    &kp G                                          &kp Y     &kp H    &kp A     &kp E    &kp I    &cmaqtm
 &kp LSHFT &kp Q  &kp X  &kp M    &kp C    &kp V  &kp HOME                 &kp END        &kp K     &kp P    &kp DOT   &mindblq &slshlst &kp RSHFT
-                        &kp LALT &kp RALT &to 1  &mt LC(LA(LSHFT)) SPACE  &mt LCTRL RET  &to 2     &bspdel  &tdgui
+                        &kp LALT &kp RALT &to 1  &mt LC(LA(LSHFT)) SPACE  &mt LCTRL RET  &to 2     &bspcdel &tdgui
             >;
 
             sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN>;
