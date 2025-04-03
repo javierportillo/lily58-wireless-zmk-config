@@ -109,11 +109,11 @@
 
             display-name = "Symbols";
             bindings = <
-&kp F12 &kp F1    &kp F2    &kp F3   &kp F4   &kp F5                    &kp F6     &kp F7    &kp F8    &kp F9    &kp F10         &kp F11
-&trans  &kp EXCL  &kp AT    &kp LBKT &kp RBKT &kp PIPE                  &kp MINUS  &kp KP_N7 &kp KP_N8 &kp KP_N9 &kp KP_MULTIPLY &kp UNDER
-&trans  &kp HASH  &kp DLLR  &kp LPAR &kp RPAR &kp BSLH                  &kp EQUAL  &kp KP_N4 &kp KP_N5 &kp KP_N6 &kp KP_PLUS     &kp GREATER_THAN
-&trans  &kp PRCNT &kp CARET &kp LBRC &kp RBRC &kp AMPS &trans &kp LNLCK &kp SLASH  &kp KP_N1 &kp KP_N2 &kp KP_N3 &kp KP_DIVIDE   &kp LESS_THAN
-                            &trans   &trans   &trans   &trans &trans    &trans     &trans    &kp KP_N0
+&kp F12 &kp F1    &kp F2    &kp F3   &kp F4   &kp F5                      &kp F6     &kp F7    &kp F8    &kp F9    &kp F10         &kp F11
+&trans  &kp EXCL  &kp AT    &kp LBKT &kp RBKT &kp PIPE                    &kp MINUS  &kp KP_N7 &kp KP_N8 &kp KP_N9 &kp KP_MULTIPLY &kp UNDER
+&trans  &kp HASH  &kp DLLR  &kp LPAR &kp RPAR &kp BSLH                    &kp EQUAL  &kp KP_N4 &kp KP_N5 &kp KP_N6 &kp KP_PLUS     &kp GREATER_THAN
+&trans  &kp PRCNT &kp CARET &kp LBRC &kp RBRC &kp AMPS &trans &kp KP_NLCK &kp SLASH  &kp KP_N1 &kp KP_N2 &kp KP_N3 &kp KP_DIVIDE   &kp LESS_THAN
+                            &trans   &trans   &trans   &trans &trans      &trans     &trans    &kp KP_N0
             >;
 
             sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN>;
