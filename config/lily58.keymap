@@ -63,7 +63,7 @@
             compatible = "zmk,behavior-tap-dance";
             #binding-cells = <0>;
             tapping-term-ms = <200>;
-            bindings = <&kp LGUI>, <&kp LC(LGUI)>;
+            bindings = <&kp LGUI>, <&kp LC(LEFT_GUI)>;
         };
         tdl0d1: tap_to_0_dance_to_1 {
             compatible = "zmk,behavior-tap-dance";
@@ -112,8 +112,8 @@
             bindings = <
 &kp F12 &kp F1    &kp F2    &kp F3   &kp F4   &kp F5                 &kp F6     &kp F7    &kp F8    &kp F9    &kp F10         &kp F11
 &trans  &kp EXCL  &kp AT    &kp LBKT &kp RBKT &kp PIPE               &kp MINUS  &kp KP_N7 &kp KP_N8 &kp KP_N9 &kp KP_MULTIPLY &kp UNDER
-&trans  &kp HASH  &kp DLLR  &kp LPAR &kp RPAR &kp BLSH               &kp EQUAL  &kp KP_N4 &kp KP_N5 &kp KP_N6 &kp KP_PLUS     &kp GT
-&trans  &kp PRCNT &kp CARET &kp LBRC &kp RBRC &kp AMPS &trans &trans &kp SLASH  &kp KP_N1 &kp KP_N2 &kp KP_N3 &kp KP_DIVIDE   &kp LT
+&trans  &kp HASH  &kp DLLR  &kp LPAR &kp RPAR &kp BLSH               &kp EQUAL  &kp KP_N4 &kp KP_N5 &kp KP_N6 &kp KP_PLUS     &kp GREATER_THAN
+&trans  &kp PRCNT &kp CARET &kp LBRC &kp RBRC &kp AMPS &trans &trans &kp SLASH  &kp KP_N1 &kp KP_N2 &kp KP_N3 &kp KP_DIVIDE   &kp LESS_THAN
                             &trans   &trans   &trans   &trans &trans &trans     &trans    &kp KP_N0
             >;
 
