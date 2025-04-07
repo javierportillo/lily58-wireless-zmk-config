@@ -204,7 +204,7 @@
 
 
         mouse_layer {
-            display-name = "Mouse"
+            display-name = "Mouse";
             bindings = <
 &trans &trans &trans   &trans   &trans   &trans                    &trans         &trans         &trans       &trans          &trans &trans
 &trans &trans &kp LGUI &mkp MB4 &mkp MB5 &trans                    &msc SCRL_LEFT &msc SCRL_DOWN &msc SCRL_UP &msc SCRL_RIGHT &trans &trans
