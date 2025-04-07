@@ -28,6 +28,7 @@ Above is the base graphite layout in which my keymap is inspired. The changes ar
 - Layer switching works like a standard transmission shift stick, you can always go from any layer to any other layer. On all layers:
   - Right thumb: tap to 1; double tap to 2.
   - Left  thumb: tap to 3; double tap to 4.
+- Mouse Emulation layer
 
 ## Layers
 
@@ -52,9 +53,9 @@ layer 1: Base ------------------------------------------------------------------
 layer 2: Symbol ------------------------------------------------------------------------------------------------
 | F12   | F1  | F2   | F3  | F4   | F5   |       | |        | F6     | F7    | F8   | F9    | F10     | F11    |
 | ▽     | !   | @    | [   | ]    | ¦    |       | |        | -      | 7     | 8    | 9     | *       | _      |
-| ▽     | #   | $    | (   | )    | \    |       | |        | =      | 4     | 5    | 6     | +       | >      |
+| ▽     | #   | $    | (   | )    | \    |       | |        | = +    | 4     | 5    | 6     | 0       | >      |
 | ▽     | %   | ^    | {   | }    | &    | ▽     | | NUMLCK | /      | 1     | 2    | 3     | .       | <      |
-|       |     |      | ▽   | ▽    | ▽    | ▽     | | ▽      | ▽      | ▽     | 0    |       |         |        |
+|       |     |      | ▽   | ▽    | ▽    | ▽     | | ▽      | ▽      | ▽     | ▽    |       |         |        |
 ----------------------------------------------------------------------------------------------------------------
 
 layer 3: Navigation / Media ------------------------------------------------------------------------------------
