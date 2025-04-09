@@ -97,14 +97,14 @@
             hold-trigger-on-release;
         };
 
-        hmamp: home_row_mod_ampersand {
+        hmdllr: home_row_mod_dollar {
             compatible = "zmk,behavior-hold-tap";
             #binding-cells = <2>;
             flavor = "balanced";
             require-prior-idle-ms = <150>;
             tapping-term-ms = <280>;
             quick-tap-ms = <175>;
-            bindings = <&kp>, <&m_amp>;
+            bindings = <&kp>, <&m_dllar>;
             hold-trigger-key-positions = <KEYS_R>;
             hold-trigger-on-release;
         };
@@ -135,12 +135,12 @@
 
     macros {
         // FIX HRM affecting the shifted symbols like & ( )
-        m_amp: ampersand {
+        m_dllar: dollar {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             bindings
                 = <&macro_press &kp LSHIFT>
-                , <&macro_tap &kp N7>
+                , <&macro_tap &kp N4>
                 , <&macro_release &kp LSHIFT>
                 ;
         };
@@ -183,7 +183,7 @@
             bindings = <
 &kp F12 &kp F1    &kp F2         &kp F3         &kp F4          &kp F5                      &kp F6     &kp F7           &kp F8          &kp F9          &kp F10         &kp F11
 &trans  &kp EXCL  &kp AT         &kp LBKT       &kp RBKT        &kp PIPE                    &kp MINUS  &kp KP_N7        &kp KP_N8       &kp KP_N9       &kp KP_MULTIPLY &kp UNDER
-&trans  &kp HASH  &hmamp LGUI 0  &hmlpar LALT 0 &hmrpar LCTRL 0 &kp BSLH                    &kp EQUAL  &hmr RCTRL KP_N4 &hmr LALT KP_N5 &hmr RGUI KP_N6 &kp KP_N0       &kp GREATER_THAN
+&trans  &kp HASH  &hmdllr LGUI 0 &hmlpar LALT 0 &hmrpar LCTRL 0 &kp BSLH                    &kp EQUAL  &hmr RCTRL KP_N4 &hmr LALT KP_N5 &hmr RGUI KP_N6 &kp KP_N0       &kp GREATER_THAN
 &trans  &kp PRCNT &kp CARET      &kp LBRC       &kp RBRC        &kp AMPS &trans &kp KP_NLCK &kp SLASH  &kp KP_N1        &kp KP_N2       &kp KP_N3       &kp KP_DOT      &kp LESS_THAN
                                  &trans         &trans          &trans   &trans &trans      &trans     &trans           &trans
             >;

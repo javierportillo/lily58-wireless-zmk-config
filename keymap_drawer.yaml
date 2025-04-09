@@ -1,0 +1,238 @@
+layout: {zmk_keyboard: lily58}
+layers:
+  Base:
+  - '`'
+  - '1'
+  - '2'
+  - '3'
+  - '4'
+  - '5'
+  - '6'
+  - '7'
+  - '8'
+  - '9'
+  - '0'
+  - 'CAPS'
+  - TAB
+  - B
+  - L
+  - D
+  - W
+  - Z
+  - {t: '''', s: _}
+  - F
+  - O
+  - U
+  - J
+  - ;
+  - ESC
+  - N
+  - {t: R, h: LGUI}
+  - {t: T, h: LALT}
+  - {t: S, h: LCTRL}
+  - G
+  - Y
+  - {t: H, h: RCTRL}
+  - {t: A, h: LALT}
+  - {t: E, h: RGUI}
+  - I
+  - {t: ',', s: '?'}
+  - LSHFT
+  - Q
+  - X
+  - M
+  - C
+  - V
+  - PSCRN
+  - DEL
+  - K
+  - P
+  - {t: '.', s: '>'}
+  - {t: '-', s: '"'}
+  - {t: /, s: <}
+  - RSHFT
+  - INS
+  - RALT
+  - 'To 3/4'
+  - {t: SPACE, h: 'HYPR'}
+  - RET
+  - 'To 1/2'
+  - 'BCKSP'
+  - APP
+  Symbols:
+  - F12
+  - F1
+  - F2
+  - F3
+  - F4
+  - F5
+  - F6
+  - F7
+  - F8
+  - F9
+  - F10
+  - F11
+  - {t: ▽, type: trans}
+  - '!'
+  - '@'
+  - '['
+  - ']'
+  - '|'
+  - '-'
+  - KP 7
+  - KP 8
+  - KP 9
+  - KP *
+  - _
+  - {t: ▽, type: trans}
+  - '#'
+  - {t: '&', h: LGUI}
+  - {t: '(', h: LALT}
+  - {t: ')', h: LCTRL}
+  - \
+  - {t: '=', s: '+'}
+  - {t: KP 4, h: RCTRL}
+  - {t: KP 5, h: LALT}
+  - {t: KP 6, h: RGUI}
+  - KP 0
+  - '>'
+  - {t: ▽, type: trans}
+  - '%'
+  - ^
+  - '{'
+  - '}'
+  - '&'
+  - {t: ▽, type: trans}
+  - KP NLCK
+  - /
+  - KP 1
+  - KP 2
+  - KP 3
+  - KP .
+  - <
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  System:
+  - BT CLR
+  - BT 0
+  - BT 1
+  - BT 2
+  - BT 3
+  - BT 4
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - MUTE
+  - VOL DN
+  - VOL UP
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - HOME
+  - PG DN
+  - PG UP
+  - END
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - LEFT
+  - DOWN
+  - UP
+  - RIGHT
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - PREV
+  - PLAY
+  - NEXT
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  Mouse:
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - LGUI
+  - 'MB4'
+  - 'MB5'
+  - {t: ▽, type: trans}
+  - 'SCRL LEFT'
+  - 'SCRL DOWN'
+  - 'SCRL UP'
+  - 'SCRL RIGHT'
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - 'MB3'
+  - 'MB2'
+  - 'MB1'
+  - {t: ▽, type: trans}
+  - 'MOUSE LEFT'
+  - 'MOUSE DOWN'
+  - 'MOUSE UP'
+  - 'MOUSE RIGHT'
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - LALT
+  - LCTRL
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
