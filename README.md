@@ -78,6 +78,5 @@ layer 4: Mouse Emulation -------------------------------------------------------
 
 ## TODO:
 
-- Fix HRM also affecting caps word behaviour.
 - Change BTCLR position to be a combo or on a harder to press key to avoid missfires.
 
