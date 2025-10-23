@@ -201,7 +201,6 @@
         compatible = "zmk,keymap";
 
         default_layer {
-            display-name = "Base";
             bindings = <
 &kp GRAVE  &kp N1  &kp N2       &kp N3       &kp N4        &kp N5                                      &kp N6   &kp N7        &kp N8       &kp N9       &kp N0   &kp CAPS
 &kp TAB    &kp B   &kp L        &kp D        &kp W         &kp Z                                       &sqtndr  &kp F         &kp O        &kp U        &kp J    &kp SEMI
@@ -214,7 +213,6 @@
         };
 
         symbol_layer {
-            display-name = "Symbols";
             bindings = <
 &kp F12  &kp F1     &kp F2         &kp F3          &kp F4           &kp F5                          &kp F6     &kp F7            &kp F8           &kp F9           &kp F10          &kp F11
 &trans   &kp EXCL   &kp AT         &kp LBKT        &kp RBKT         &kp PIPE                        &kp MINUS  &kp KP_N7         &kp KP_N8        &kp KP_N9        &kp KP_MULTIPLY  &kp UNDER
@@ -227,7 +225,6 @@
         };
 
         navigation_layer {
-            display-name = "System";
             bindings = <
 &trans  &trans  &trans  &trans  &trans  &trans                    &kp K_PREV  &kp K_PLAY_PAUSE  &kp K_NEXT  &kp K_MUTE  &kp K_VOL_DN  &kp K_VOL_UP
 &trans  &trans  &trans  &trans  &trans  &trans                    &trans      &kp PG_UP         &kp UP      &kp PG_DN   &trans        &trans
@@ -240,7 +237,6 @@
         };
 
         mouse_layer {
-            display-name = "Mouse";
             bindings = <
 &trans  &trans  &trans    &trans    &trans    &trans                         &trans  &trans          &trans          &trans           &trans  &trans
 &trans  &trans  &kp LGUI  &mkp MB4  &mkp MB5  &trans                         &trans  &msc SCRL_UP    &mmv MOVE_UP    &msc SCRL_DOWN   &trans  &trans
