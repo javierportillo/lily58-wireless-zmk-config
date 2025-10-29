@@ -202,11 +202,11 @@
 
         default_layer {
             bindings = <
-&kp GRAVE  &kp N1  &kp N2       &kp N3       &kp N4        &kp N5                                      &kp N6  &kp N7        &kp N8       &kp N9       &kp N0         &kp CAPS
+&kp GRAVE  &kp N1  &kp N2       &kp N3       &kp N4        &kp N5                                      &kp N6  &kp N7        &kp N8       &kp N9       &kp N0         &tdbs
 &kp TAB    &kp Q   &kp W        &kp E        &kp R         &kp T                                       &kp Y   &kp U         &kp I        &kp O        &kp P          &kp BACKSLASH
 &kp ESC    &kp A   &hml LGUI S  &hml LALT D  &hml LCTRL F  &kp G                                       &kp H   &hmr RCTRL J  &hmr LALT K  &hmr RGUI L  &kp SEMICOLON  &kp SQT
 &kp LSHFT  &kp Z   &kp X        &kp C        &kp V         &kp B   &kp PSCRN                  &kp DEL  &kp N   &kp M         &kp COMMA    &kp PERIOD   &kp SLASH      &kp RSHFT
-                                &kp INS      &kp RALT      &t2t3   &mt LC(LA(LSHFT)) SPACE    &kp RET  &t0t1   &tdbs         &kp K_APP
+                                &kp INS      &kp LCTRL     &t2t3   &mt LC(LA(LSHFT)) SPACE    &kp RET  &t0t1   &kp RALT      &kp K_APP
             >;
 
             label = "Default";
@@ -228,7 +228,7 @@
             bindings = <
 &trans  &trans  &trans  &trans  &trans  &trans                    &kp K_PREV  &kp K_PLAY_PAUSE  &kp K_NEXT  &kp K_MUTE  &kp K_VOL_DN  &kp K_VOL_UP
 &trans  &trans  &trans  &trans  &trans  &trans                    &trans      &kp PG_UP         &kp UP      &kp PG_DN   &trans        &trans
-&trans  &trans  &trans  &trans  &trans  &trans                    &trans      &kp LEFT          &kp DOWN    &kp RIGHT   &trans        &trans
+&trans  &trans  &trans  &trans  &trans  &trans                    &trans      &kp LEFT          &kp DOWN    &kp RIGHT   &trans        &kp CAPS
 &trans  &trans  &trans  &trans  &trans  &trans  &trans    &trans  &trans      &kp HOME          &trans      &kp END     &trans        &trans
                         &trans  &trans  &trans  &trans    &trans  &trans      &trans            &trans
             >;
