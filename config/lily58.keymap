@@ -218,7 +218,7 @@
 &trans   &kp EXCL   &kp AT         &kp LBKT        &kp RBKT         &kp PIPE                    &kp MINUS  &kp KP_N7         &kp KP_N8        &kp KP_N9        &kp KP_MULTIPLY  &kp UNDER
 &trans   &kp HASH   &hmdlr LGUI 0  &hmlpar LALT 0  &hmrpar LCTRL 0  &kp BSLH                    &kp EQUAL  &hmr RCTRL KP_N4  &hmr LALT KP_N5  &hmr RGUI KP_N6  &kp KP_N0        &kp GREATER_THAN
 &trans   &kp PRCNT  &kp CARET      &kp LBRC        &kp RBRC         &kp AMPS  &trans    &trans  &kp SLASH  &kp KP_N1         &kp KP_N2        &kp KP_N3        &kp KP_DOT       &kp LESS_THAN
-                                   &trans          &trans           &trans    &trans    &trans  &trans     &kp K_APP         &kp KP_NLCK
+                                   &trans          &trans           &trans    &trans    &trans  &trans     &trans            &kp KP_NLCK
             >;
 
             label = "Symbol";
@@ -230,7 +230,7 @@
 &trans  &trans  &trans  &trans  &trans  &trans                    &trans      &kp PG_UP         &kp UP      &kp PG_DN   &trans        &trans
 &trans  &trans  &trans  &trans  &trans  &trans                    &trans      &kp LEFT          &kp DOWN    &kp RIGHT   &trans        &trans
 &trans  &trans  &trans  &trans  &trans  &trans  &trans    &trans  &trans      &kp HOME          &trans      &kp END     &trans        &trans
-                        &trans  &trans  &trans  &trans    &trans  &trans      &trans            &trans
+                        &trans  &trans  &trans  &trans    &trans  &trans      &trans            &kp K_APP
             >;
 
             label = "Navigation";
