@@ -238,11 +238,11 @@
 
         mouse_layer {
             bindings = <
-&none  &none  &none     &none     &none     &none                         &none  &none           &none           &none            &none  &none
-&none  &none  &kp LGUI  &mkp MB4  &mkp MB5  &none                         &none  &msc SCRL_UP    &mmv MOVE_UP    &msc SCRL_DOWN   &none  &none
-&none  &none  &mkp MB3  &mkp MB2  &mkp MB1  &none                         &none  &mmv MOVE_LEFT  &mmv MOVE_DOWN  &mmv MOVE_RIGHT  &none  &none
-&none  &none  &none     &none     &none     &none  &none       &none      &none  &msc SCRL_LEFT  &none           &msc SCRL_RIGHT  &none  &none
-                        &none     &none     &none  &kp LALT    &kp LCTRL  &none  &none           &none
+&trans  &trans  &trans    &trans    &trans    &trans                         &trans  &trans          &trans          &trans           &trans  &trans
+&trans  &trans  &kp LGUI  &mkp MB4  &mkp MB5  &trans                         &trans  &msc SCRL_UP    &mmv MOVE_UP    &msc SCRL_DOWN   &trans  &trans
+&trans  &trans  &mkp MB3  &mkp MB2  &mkp MB1  &trans                         &trans  &mmv MOVE_LEFT  &mmv MOVE_DOWN  &mmv MOVE_RIGHT  &trans  &trans
+&trans  &trans  &trans    &trans    &trans    &trans  &trans      &trans     &trans  &msc SCRL_LEFT  &trans          &msc SCRL_RIGHT  &trans  &trans
+                          &trans    &trans    &trans  &kp LALT    &kp LCTRL  &trans  &trans          &trans
             >;
 
             label = "Mouse";
