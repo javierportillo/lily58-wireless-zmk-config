@@ -218,11 +218,11 @@
 
         navigation_layer {
             bindings = <
-&trans  &trans  &trans  &trans  &trans  &trans                    &kp K_PREV  &kp K_PLAY_PAUSE  &kp K_NEXT  &kp K_MUTE  &kp K_VOL_DN  &kp K_VOL_UP
-&trans  &trans  &trans  &trans  &trans  &trans                    &trans      &kp PG_UP         &kp UP      &kp PG_DN   &trans        &trans
-&trans  &trans  &trans  &trans  &trans  &trans                    &trans      &kp LEFT          &kp DOWN    &kp RIGHT   &trans        &trans
-&trans  &trans  &trans  &trans  &trans  &trans  &trans    &trans  &trans      &kp HOME          &trans      &kp END     &trans        &trans
-                        &trans  &trans  &trans  &trans    &trans  &trans      &trans            &kp K_APP
+&kp C_BRI_DN   &kp C_BRI_UP   &trans  &trans  &trans  &trans                    &kp K_PREV  &kp K_PLAY_PAUSE  &kp K_NEXT  &kp K_MUTE  &kp K_VOL_DN  &kp K_VOL_UP
+&kp C_BRI_MIN  &kp C_BRI_MAX  &trans  &trans  &trans  &trans                    &trans      &kp PG_UP         &kp UP      &kp PG_DN   &trans        &trans
+&trans         &trans         &trans  &trans  &trans  &trans                    &trans      &kp LEFT          &kp DOWN    &kp RIGHT   &trans        &trans
+&trans         &trans         &trans  &trans  &trans  &trans  &trans    &trans  &trans      &kp HOME          &trans      &kp END     &trans        &trans
+                                      &trans  &trans  &trans  &trans    &trans  &trans      &trans            &kp K_APP
             >;
 
             label = "Navigation";
