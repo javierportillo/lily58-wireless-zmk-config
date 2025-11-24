@@ -124,6 +124,13 @@
             hold-trigger-on-release;
             label = "HMHSH";
         };
+
+        tEsc_dCa: tEsc_dCa {
+            compatible = "zmk,behavior-tap-dance";
+            label = "TESC_DCA";
+            #binding-cells = <0>;
+            bindings = <&kp ESC>, <&kp LC(A)>;
+        };
     };
 
     macros {
@@ -196,7 +203,7 @@
             bindings = <
 &kp GRAVE   &kp N1         &kp N2       &kp N3       &kp N4        &kp N5                                 &kp N6  &kp N7        &kp N8       &kp N9       &kp N0                &kp MINUS
 &kp TAB     &kp Q          &hml RALT W  &kp E        &kp R         &kp T                                  &kp Y   &kp U         &kp I        &hmr RALT O  &kp P                 &kp BACKSLASH
-&kp ESC     &hml LSHIFT A  &hml LGUI S  &hml LALT D  &hml LCTRL F  &kp G                                  &kp H   &hmr RCTRL J  &hmr LALT K  &hmr RGUI L  &hmr RSHFT SEMICOLON  &kp SQT
+&tEsc_dCa   &hml LSHIFT A  &hml LGUI S  &hml LALT D  &hml LCTRL F  &kp G                                  &kp H   &hmr RCTRL J  &hmr LALT K  &hmr RGUI L  &hmr RSHFT SEMICOLON  &kp SQT
 &caps_word  &kp Z          &kp X        &kp C        &kp V         &kp B   &kp PSCRN             &kp DEL  &kp N   &kp M         &kp COMMA    &kp PERIOD   &kp SLASH             &kp EQUAL
                                         &none        &kp CAPS      &t2t3   &mt LS(LGUI) SPACE    &kp RET  &t0t1   &tdbs         &none
             >;
