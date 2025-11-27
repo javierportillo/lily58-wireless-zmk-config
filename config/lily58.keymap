@@ -210,7 +210,7 @@
 &kp TAB     &kp Q          &hml RALT W  &kp E        &kp R         &kp T                                  &kp Y   &kp U         &kp I        &hmr RALT O  &kp P                 &kp BACKSLASH
 &tEsc_dCa   &hml LSHIFT A  &hml LGUI S  &hml LALT D  &hml LCTRL F  &kp G                                  &kp H   &hmr RCTRL J  &hmr LALT K  &hmr RGUI L  &hmr RSHFT SEMICOLON  &kp SQT
 &caps_word  &kp Z          &kp X        &kp C        &kp V         &kp B   &kp PSCRN             &kp DEL  &kp N   &kp M         &kp COMMA    &kp PERIOD   &kp SLASH             &kp EQUAL
-                                        &none        &kp CAPS      &t2t3   &mt LS(LGUI) SPACE    &kp RET  &t0t1   &tdbs         &none
+                                        &kp K_MENU   &kp CAPS      &t2t3   &mt LS(LGUI) SPACE    &kp RET  &t0t1   &tdbs         &none
             >;
 
             label = "Default";
@@ -234,7 +234,7 @@
 &kp C_BRI_MIN  &kp C_BRI_MAX  &trans  &trans  &trans  &trans                    &trans      &kp PG_UP         &kp UP      &kp PG_DN   &trans        &trans
 &trans         &trans         &trans  &trans  &trans  &trans                    &trans      &kp LEFT          &kp DOWN    &kp RIGHT   &trans        &trans
 &trans         &trans         &trans  &trans  &trans  &trans  &trans    &trans  &trans      &kp HOME          &trans      &kp END     &trans        &trans
-                                      &trans  &trans  &trans  &trans    &trans  &trans      &trans            &kp K_APP
+                                      &trans  &trans  &trans  &trans    &trans  &trans      &trans            &trans
             >;
 
             label = "Navigation";
