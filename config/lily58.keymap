@@ -210,7 +210,7 @@
 &kp TAB     &kp Q          &hml RALT W  &kp E        &kp R         &kp T                                  &kp Y   &kp U         &kp I        &hmr RALT O  &kp P                 &kp BACKSLASH
 &tEsc_dCa   &hml LSHIFT A  &hml LGUI S  &hml LALT D  &hml LCTRL F  &kp G                                  &kp H   &hmr RCTRL J  &hmr LALT K  &hmr RGUI L  &hmr RSHFT SEMICOLON  &kp SQT
 &caps_word  &kp Z          &kp X        &kp C        &kp V         &kp B   &kp PSCRN             &kp DEL  &kp N   &kp M         &kp COMMA    &kp PERIOD   &kp SLASH             &kp EQUAL
-                                        &kp K_APP    &kp CAPS      &t2t3   &mt LS(LGUI) SPACE    &kp RET  &t0t1   &tdbs         &none
+                                        &kp CAPS     &kp K_APP     &t2t3   &mt LS(LGUI) SPACE    &kp RET  &t0t1   &tdbs         &none
             >;
 
             label = "Default";
