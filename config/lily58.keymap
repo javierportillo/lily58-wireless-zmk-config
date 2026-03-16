@@ -276,11 +276,11 @@
 
         hypr {
             bindings = <
-&none  &kp LS(LG(N1))  &kp LS(LG(N2))  &kp LS(LG(N3))  &kp LS(LG(N4))  &kp LS(LG(N5))                  &kp LS(LG(N6))    &kp LS(LG(N7))         &kp LS(LG(N8))     &kp LS(LG(N9))     &kp LS(LG(N0))        &none
-&none  &none           &none           &kp LC(LG(E))   &kp LC(LG(T))   &none                           &kp LS(LG(LEFT))  &kp LS(LG(DOWN))       &kp LS(LG(UP))     &kp LS(LG(RIGHT))  &none                 &none
-&none  &none           &none           &none           &kp LC(LG(F))   &kp LS(LG(G))                   &kp LG(LEFT)      &kp LG(DOWN)           &kp LG(UP)         &kp LG(RIGHT)      &kp LS(LA(LG(LEFT)))  &kp LS(LA(LG(RIGHT)))
-&none  &none           &none           &none           &none           &kp LS(LG(B))   &none    &none  &kp LG(MINUS)     &kp LS(LG(EQUAL))      &kp LS(LG(MINUS))  &kp LG(EQUAL)      &none                 &none
-                                       &none           &none           &none           &none    &none  &none             &kp LC(LG(BACKSPACE))  &none
+&none  &kp LS(LG(N1))  &kp LS(LG(N2))  &kp LS(LG(N3))  &kp LS(LG(N4))  &kp LS(LG(N5))                                 &kp LS(LG(N6))       &kp LS(LG(N7))           &kp LS(LG(N8))             &kp LS(LG(N9))     &kp LS(LG(N0))          &kp LS(LG(BACKSPACE))
+&none  &none           &none           &kp LC(LG(E))   &kp LC(LG(T))   &none                                          &kp LS(LG(LEFT))     &kp LS(LG(DOWN))         &kp LS(LG(UP))             &kp LS(LG(RIGHT))  &none                   &none
+&none  &none           &none           &none           &kp LC(LG(F))   &kp LS(LG(G))                                  &kp LG(LEFT)         &kp LG(DOWN)             &kp LG(UP)                 &kp LG(RIGHT)      &kp LS(LA(LG(LEFT)))    &kp LS(LA(LG(RIGHT)))
+&none  &none           &none           &none           &none           &kp LS(LG(B))   &none    &none                 &kp LG(MINUS)        &kp LS(LG(EQUAL))        &kp LS(LG(MINUS))          &kp LG(EQUAL)      &kp LA(LC(LG(INSERT)))  &kp LA(LC(LG(DEL)))
+                                       &none           &none           &none           &none    &kp LA(LC(LG(HOME)))  &kp LA(LC(LG(END)))  &kp LA(LC(LG(PAGE_UP)))  &kp LA(LC(LG(PAGE_DOWN)))
             >;
         };
     };
