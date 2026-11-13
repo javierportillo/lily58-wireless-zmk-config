@@ -1,0 +1,12 @@
+config LILY58_USB_BOOTLOADER_TOUCH
+    bool "Enter UF2 bootloader when the Studio USB port is closed at 1200 baud"
+    default y
+    depends on BOARD_NICE_NANO_V2
+    depends on ZMK_USB && USB_CDC_ACM && ZMK_STUDIO_TRANSPORT_UART
+    depends on NRF_STORE_REBOOT_TYPE_GPREGRET
+    select UART_LINE_CTRL
+    select CDC_ACM_DTE_RATE_CALLBACK_SUPPORT
+    help
+      Adds a host-triggered UF2 reset to the USB-connected central half on
+      ZMK v0.3. Uses the same reboot type as the existing bootloader behavior.
+      No polling occurs until the host selects 1200 baud.

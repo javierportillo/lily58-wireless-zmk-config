@@ -1,0 +1,3 @@
+# Desktop-user access to this Lily58's Studio serial port for 1200-baud reset.
+# Must sort before systemd's 73-seat-late.rules to apply the uaccess ACL.
+SUBSYSTEM=="tty", ATTRS{idVendor}=="1d50", ATTRS{idProduct}=="615e", ATTRS{serial}=="23E5F50B0A98298E", TAG+="uaccess"

@@ -1,0 +1,5 @@
+if(CONFIG_LILY58_USB_BOOTLOADER_TOUCH)
+  zephyr_library()
+  zephyr_library_include_directories(${APPLICATION_SOURCE_DIR}/include)
+  zephyr_library_sources(usb_bootloader.c)
+endif()

@@ -1,0 +1,198 @@
+#!/usr/bin/env python3
+"""Generate a standalone visual reference directly from the clean ZMK keymap."""
+
+from html import escape
+from pathlib import Path
+import re
+import xml.etree.ElementTree as ET
+
+ROOT = Path(__file__).resolve().parents[1]
+SOURCE = ROOT / "config/clean.keymap"
+OUTPUT = ROOT / "docs/clean-keymap.html"
+
+KEYS = {
+    "GRAVE": "`", "MINUS": "−", "BSLH": "\\", "APOS": "'", "SEMI": ";",
+    "COMMA": ",", "DOT": ".", "FSLH": "/", "EXCL": "!", "HASH": "#",
+    "DLLR": "$", "PRCNT": "%", "AMPS": "&", "LPAR": "(", "RPAR": ")",
+    "ASTERISK": "*", "QMARK": "?", "AT": "@", "PIPE": "|", "EQUAL": "=",
+    "UNDER": "_", "LBKT": "[", "RBKT": "]", "DQT": '"', "CARET": "^",
+    "PLUS": "+", "TILDE": "~", "LBRC": "{", "RBRC": "}", "LESS_THAN": "<",
+    "GREATER_THAN": ">", "COLON": ":", "ESC": "Esc", "TAB": "Tab",
+    "SPACE": "Space", "BSPC": "Backspace", "ENTER": "Enter", "DEL": "Delete",
+    "LSHFT": "Shift", "RSHFT": "Shift", "LGUI": "Super", "RGUI": "Super",
+    "LALT": "Alt", "RALT": "AltGr", "LCTRL": "Ctrl", "RCTRL": "Ctrl",
+    "HOME": "Home", "END": "End", "LEFT": "←", "DOWN": "↓", "RIGHT": "→",
+    "UP": "↑", "PG_UP": "Page ↑", "PG_DN": "Page ↓", "INS": "Insert",
+    "PSCRN": "Print Scr", "CAPS": "Caps Lock", "KP_NLCK": "Num Lock",
+    "KP_ENTER": "KP Enter", "KP_MINUS": "KP −", "KP_PLUS": "KP +",
+    "KP_EQUAL": "KP =", "KP_DOT": "KP .", "KP_DIVIDE": "KP /",
+    "K_PREV": "Previous", "K_PLAY_PAUSE": "Play/Pause", "K_NEXT": "Next",
+    "K_MUTE": "Mute", "K_VOL_DN": "Volume −", "K_VOL_UP": "Volume +",
+    "C_BRI_DN": "Bright −", "C_BRI_UP": "Bright +",
+}
+MODS = {"LSHFT", "RSHFT", "LGUI", "RGUI", "LALT", "RALT", "LCTRL", "RCTRL"}
+WINDOWS = {
+    "LG(MINUS)": "Width +", "LG(EQUAL)": "Width −", "LG(UP)": "Focus ↑",
+    "LG(LEFT)": "Focus ←", "LG(DOWN)": "Focus ↓", "LG(RIGHT)": "Focus →",
+    "LG(LS(EQUAL))": "Height +", "LG(LS(MINUS))": "Height −",
+    "LG(HOME)": "Restore", "LG(F)": "Fullscreen",
+    "LG(LS(LEFT))": "Swap ←", "LG(LS(DOWN))": "Swap ↓",
+    "LG(LS(UP))": "Swap ↑", "LG(LS(RIGHT))": "Swap →",
+    "LC(LA(TAB))": "Monitor", "LG(LC(F))": "Tiled full",
+    "LG(LC(LA(F13)))": "Move win", "LG(LC(LA(F14)))": "Move WS",
+    "LG(G)": "Group", "LG(LA(LEFT))": "Join ←", "LG(LA(G))": "Leave",
+    "LG(LC(RIGHT))": "Next tab", "LG(LC(LEFT))": "Prev tab",
+}
+DESCRIPTIONS = {
+    "Base": "QWERTY · tap letters, hold the home row for modifiers",
+    "Menu": "Tap RC6, then a selector · layers persist until another selection or RE2",
+    "Symbols": "Shell essentials on the left home row · opening brackets always precede closing brackets",
+    "Numbers": "Ordinary number-row keycodes · immediate held modifiers on the left",
+    "Keypad": "Native keypad keycodes · same digit geometry as Numbers",
+    "Function": "F1–F9 follow the digit grid · immediate held modifiers on the left",
+    "Navigation": "I/J/K/L direction diamond · add left-hand modifiers for selection and word movement",
+    "Mouse": "Left E/S/D/F moves · right I/J/K/L scrolls · 2× pointer/scroll speed · row-D modifiers for chords",
+    "Windows": "Right: workspaces, swaps, focus and silent sends · left: groups and monitor transfers",
+    "System": "Bluetooth, media, brightness and Compose · row A contains maintenance actions",
+}
+
+
+def key_label(code):
+    if code in KEYS:
+        return KEYS[code]
+    if re.fullmatch(r"N[0-9]", code):
+        return code[1:]
+    if re.fullmatch(r"KP_N[0-9]", code):
+        return "KP " + code[-1]
+    if re.fullmatch(r"[A-Z]|F(?:[1-9]|1[0-2])", code):
+        return code
+    if code in WINDOWS:
+        return WINDOWS[code]
+    match = re.fullmatch(r"LG\(LS\(LA\(N([1-5])\)\)\)", code)
+    if match:
+        return "Send " + match[1]
+    match = re.fullmatch(r"LG\(N([0-9])\)", code)
+    if match:
+        return "WS " + (match[1] if match[1] != "0" else "10")
+    raise ValueError(f"Missing visual label for {code}")
+
+
+def describe(binding):
+    parts = binding.split()
+    behavior = parts[0]
+    if behavior == "&none":
+        return "—", "", "unused"
+    if behavior == "&to":
+        return ("Base ↩" if parts[1] == "BASE" else parts[1].title()), "layer", "layer"
+    if behavior in ("&hml", "&hmr"):
+        return key_label(parts[2]), "hold " + key_label(parts[1]), "dual"
+    if behavior == "&osm":
+        return key_label(parts[1]), "one-shot", "modifier"
+    if behavior == "&kp":
+        notes = {"LC(LA(TAB))": "next monitor", "LG(LC(LA(F13)))": "next monitor",
+                 "LG(LC(LA(F14)))": "next monitor", "LG(G)": "toggle",
+                 "LG(LA(LEFT))": "group", "LG(LA(G))": "group",
+                 "LG(LC(RIGHT))": "group", "LG(LC(LEFT))": "group"}
+        secondary = "hold" if parts[1] in MODS else notes.get(parts[1], "")
+        if parts[1].startswith("LG(LS(LA(N"):
+            secondary = "silently"
+        return key_label(parts[1]), secondary, "modifier" if parts[1] in MODS else "key"
+    if behavior == "&compose_home":
+        return "Compose", "then Base", "layer"
+    if behavior == "&bootloader":
+        return "Bootloader", "this half", "danger"
+    if behavior == "&bt":
+        actions = {"BT_CLR": "Clear BT", "BT_PRV": "BT previous", "BT_NXT": "BT next"}
+        return ("BT " + parts[2] if parts[1] == "BT_SEL" else actions[parts[1]]), "", "danger" if parts[1] == "BT_CLR" else "key"
+    if behavior == "&out":
+        return {"OUT_USB": "USB output", "OUT_BLE": "BLE output"}[parts[1]], "", "key"
+    if behavior == "&mkp":
+        return {"MB1": "Left click", "MB2": "Right click", "MB3": "Middle", "MB4": "Back", "MB5": "Forward"}[parts[1]], "mouse", "pointer"
+    if behavior in ("&mmv", "&msc"):
+        arrow = {"UP": "↑", "DOWN": "↓", "LEFT": "←", "RIGHT": "→"}[parts[1].split("_")[-1]]
+        return arrow, "move" if behavior == "&mmv" else "scroll", "pointer"
+    raise ValueError(f"Unsupported binding: {binding}")
+
+
+def positions():
+    result = []
+    # Physical order matches the 58 bindings in the Lily58 transform.
+    for row_index, row in enumerate("ABC"):
+        for side in "LR":
+            for column in (range(6, 0, -1) if side == "L" else range(1, 7)):
+                x = (6 - column) * 78 if side == "L" else 620 + (column - 1) * 78
+                stagger = {6: 26, 5: 26, 4: 12, 3: 0, 2: 12, 1: 18}[column]
+                result.append((f"{side}{row}{column}", x, row_index * 84 + stagger))
+    for side in "LR":
+        for column in (range(6, -1, -1) if side == "L" else range(0, 7)):
+            x = (6 - column) * 78 if side == "L" else 620 + (column - 1) * 78
+            result.append((f"{side}D{column}", x, 252 + (30 if column == 0 else {6:26,5:26,4:12,3:0,2:12,1:18}[column])))
+    for side in "LR":
+        for column in (range(4, 0, -1) if side == "L" else range(1, 5)):
+            x = 156 + (4 - column) * 78 if side == "L" else 620 + (column - 1) * 78
+            result.append((f"{side}E{column}", x, 366))
+    assert len(result) == 58 and len({p[0] for p in result}) == 58
+    return result
+
+
+def diagram(name, bindings):
+    elements = [f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="-8 -8 1100 450" role="img" aria-label="{name} layer, all 58 physical keys">']
+    for (position, x, y), binding in zip(positions(), bindings, strict=True):
+        label, secondary, category = describe(binding)
+        fixed = " anchor" if position in ("LC6", "RC6", "RE2") else ""
+        elements.append(f'<g class="{category}{fixed}" transform="translate({x},{y})"><title>{escape(position + ": " + binding)}</title><rect width="72" height="76" rx="10"/>')
+        size = 11 if len(label) > 10 else 13 if len(label) > 6 else 19
+        elements.append(f'<text x="36" y="28" class="legend" font-size="{size}">{escape(label)}</text>')
+        elements.append(f'<text x="36" y="46" class="secondary">{escape(secondary)}</text><text x="36" y="65" class="position">{position}</text></g>')
+    elements.append("</svg>")
+    svg = "".join(elements)
+    ET.fromstring(svg)
+    return svg
+
+
+def main():
+    text = SOURCE.read_text().split("keymap {", 1)[1]
+    layers = []
+    for name, body in re.findall(r'label\s*=\s*"([^"]+)";\s*bindings\s*=\s*<(.*?)>;', text, re.S):
+        bindings = [" ".join(b.split()) for b in re.findall(r"&[^&]+", body)]
+        if len(bindings) != 58:
+            raise ValueError(f"{name}: expected 58 keys, got {len(bindings)}")
+        layers.append((name, bindings))
+    if len(layers) != 10:
+        raise ValueError("Expected ten clean layers")
+    # Derive the menu mnemonic and physical position from the actual bindings.
+    maps = dict(layers)
+    routes = {"Base": ("RE2", "Tap RE2"), "Menu": ("RC6", "Tap RC6")}
+    for index, binding in enumerate(maps["Menu"]):
+        if binding.startswith("&to ") and binding not in ("&to MENU", "&to BASE"):
+            destination = binding.split()[1].title()
+            position = positions()[index][0]
+            letter = position if position[1] == "E" else key_label(maps["Base"][index].split()[-1])
+            routes[destination] = (letter, f"Tap RC6 → {letter}" + (f" ({position})" if letter != position else ""))
+    nav = "".join(f'<a href="#{name.lower()}">{name} <kbd>{routes[name][0]}</kbd></a>' for name, _ in layers)
+    sections = "".join(f'<section id="{name.lower()}"><div class="heading"><span class="number">{index:02}</span><div><h2>{name}</h2><p class="shortcut">{escape(routes[name][1])}</p><p>{DESCRIPTIONS[name]}</p></div></div>{diagram(name, bindings)}</section>' for index, (name, bindings) in enumerate(layers))
+    html = '''<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lily58 · Clean keymap reference</title>
+<style>
+:root{color-scheme:dark;--bg:#111819;--panel:#182123;--text:#e9eee9;--muted:#a0b4b5;--accent:#bce485}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:96px}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,sans-serif;line-height:1.5}
+header,main,footer{max-width:1200px;margin:auto;padding:32px}header{padding-top:48px;padding-bottom:20px}.eyebrow{color:var(--accent);font-size:12px;letter-spacing:3px;text-transform:uppercase}h1{font-size:clamp(28px,5vw,48px);letter-spacing:-1.8px;margin:8px 0}h2{font-size:25px;margin:0}p{margin:5px 0;color:var(--muted)}.intro{max-width:780px}kbd{background:#293637;border:1px solid #506264;border-radius:5px;padding:2px 6px;color:var(--text);font-size:12px}
+nav{position:sticky;top:0;z-index:2;background:#111819f5;border-block:1px solid #344144;display:flex;gap:6px;flex-wrap:wrap;justify-content:center;padding:12px}nav a{padding:5px 11px;color:var(--text);text-decoration:none;font-size:13px;border-radius:20px}nav a:hover,nav a:focus-visible{background:var(--accent);color:#17201b;outline:2px solid var(--accent)}
+.guide{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;margin-bottom:30px}.guide article{border-left:2px solid #66834b;padding-left:16px}.guide h3{margin:0 0 6px;font-size:14px}.guide p{font-size:13px}.heading{display:flex;align-items:center;gap:18px;margin-bottom:24px}.heading p{font-size:13px}.number{color:var(--accent);font:26px ui-monospace,monospace}section{background:var(--panel);border:1px solid #344144;border-radius:18px;padding:24px;margin-bottom:28px;overflow:auto}section svg{display:block;width:100%;min-width:750px;height:auto}svg text{text-anchor:middle;font-family:system-ui,sans-serif;fill:#eef2eb}svg rect{fill:#273335;stroke:#4b6062;stroke-width:1}.legend{font-weight:650}.secondary{font-size:10px;fill:#b4c9b9}.position{font-size:9px;fill:#9cafb0;letter-spacing:.6px}.unused rect{fill:#1b2527;stroke:#304042}.unused .legend{fill:#56676a}.modifier rect,.dual rect{fill:#293c32;stroke:#668357}.layer rect{fill:#303a50;stroke:#7d90bb}.pointer rect{fill:#243e43;stroke:#579fa8}.danger rect{fill:#493132;stroke:#a66e69}.anchor rect{stroke-width:2}.legend-guide{display:flex;flex-wrap:wrap;gap:16px;font-size:12px;color:var(--muted);margin-top:20px}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}.footnote{font-size:12px}footer{padding-top:0;font-size:12px;color:var(--muted)}a{color:var(--accent)}
+@media print{:root{color-scheme:light}body{background:white;color:#17201b}nav,.guide,.legend-guide,footer{display:none}header{padding:0 24px}h1{font-size:28px}main{padding:0}section{break-inside:avoid;background:#182123;print-color-adjust:exact;-webkit-print-color-adjust:exact;margin:12px 0}section h2{color:#eef2eb}section svg{min-width:0}html{scroll-padding-top:0}}
+.heading .shortcut{color:var(--accent);font:13px ui-monospace,monospace;margin:4px 0 8px}
+</style>
+<header><div class="eyebrow">Lily58 / Clean layout</div><h1>A place for every action.</h1><p class="intro">Your complete keyboard reference. Tap <kbd>RC6</kbd> for the layer menu, then tap a selector. Tap <kbd>RE2</kbd> to return to Base from anywhere.</p>
+<div class="legend-guide"><span><i class="dot" style="background:#a8c58d"></i>Modifiers / dual roles</span><span><i class="dot" style="background:#9badde"></i>Layer / Compose</span><span><i class="dot" style="background:#73bbc4"></i>Mouse / scroll</span><span><i class="dot" style="background:#c98b86"></i>Maintenance</span><span>Hover a key for its exact binding · browser Print saves a PDF</span></div></header>
+<nav aria-label="Layers">NAVIGATION</nav><main>
+<div class="guide"><article><h3>Two taps to your tools</h3><p>Menu → S Symbols · N Numbers · P Keypad · F Function · V Navigation · M Mouse · RE1 Windows · B System · C Compose.</p></article><article><h3>Modifiers, three ways</h3><p>Base: hold home-row letters. Menu: tap right home-row one-shots (5 s expiry), then choose a layer or Base. Utility layers: hold plain modifier keys. Ctrl+Alt alone: use the plain strip.</p></article><article><h3>Spanish & Compose</h3><p>AltGr + A/E/I/O/U → áéíóú; Y → ü; N → ñ; / → ¿; Shift+1 → ¡. Add Shift for capitals. Menu → C sends Compose and returns to Base.</p></article></div>
+SECTIONS
+</main><footer>Generated from <a href="../config/clean.keymap">config/clean.keymap</a>. Position columns count from center outward; E is the thumb row. Blank keys have no action. Regenerate with <code>./scripts/render-keymap</code>.</footer></html>
+'''.replace("NAVIGATION", nav).replace("SECTIONS", sections)
+    OUTPUT.write_text(html)
+    print(f"Generated {OUTPUT.relative_to(ROOT)}: {len(layers)} layers, 580 keys")
+
+
+if __name__ == "__main__":
+    main()

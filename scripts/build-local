@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+target=all
+target_set=false
+keymap=lily58
+while (( $# )); do
+  case "$1" in
+    all|left|right|update)
+      if $target_set; then
+        echo "Expected only one build target." >&2; exit 2
+      fi
+      target="$1"; target_set=true; shift ;;
+    --keymap)
+      if (( $# < 2 )); then echo "--keymap requires a name." >&2; exit 2; fi
+      keymap="$2"; shift 2 ;;
+    -h|--help)
+      echo "Usage: $0 [all|left|right|update] [--keymap NAME]"
+      echo "Build firmware with Docker (default: both halves, original lily58 keymap)."
+      echo "Example: $0 --keymap clean"
+      exit 0 ;;
+    *) echo "Unknown argument: $1 (use --help)" >&2; exit 2 ;;
+  esac
+done
+
+repo_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+if [[ ! "$keymap" =~ ^[a-zA-Z0-9][a-zA-Z0-9_-]*$ ]] || [[ ! -f "$repo_dir/config/$keymap.keymap" ]]; then
+  echo "Unknown keymap '$keymap': expected a name from config/*.keymap (without extension)." >&2
+  exit 2
+fi
+# ZMK's Zephyr 3.5 toolchain, pinned to an immutable multi-platform digest.
+image='zmkfirmware/zmk-build-arm:3.5@sha256:0979a8de325e3d822e48bd8d1d9efaee2984ad3750253119f920a342f0ce5cde'
+mkdir -p "$repo_dir/.local-build/home" "$repo_dir/firmware"
+
+# Serialize builds sharing this workspace.
+exec 9>"$repo_dir/.local-build/lock"
+flock -n 9 || { echo "Another local build is running." >&2; exit 1; }
+
+exec docker run --rm --init \
+  --user "$(id -u):$(id -g)" \
+  --env HOME=/workspace/home \
+  --workdir /workspace \
+  --mount "type=bind,source=$repo_dir/.local-build,target=/workspace" \
+  --mount "type=bind,source=$repo_dir/config,target=/config,readonly" \
+  --mount "type=bind,source=$repo_dir/build.yaml,target=/build.yaml,readonly" \
+  --mount "type=bind,source=$repo_dir/scripts,target=/scripts,readonly" \
+  --mount "type=bind,source=$repo_dir/zephyr,target=/local-module/zephyr,readonly" \
+  --mount "type=bind,source=$repo_dir/module,target=/local-module/module,readonly" \
+  --mount "type=bind,source=$repo_dir/firmware,target=/firmware" \
+  "$image" python3 /scripts/build-local.py "$target" "$keymap"

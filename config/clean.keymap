@@ -1,0 +1,203 @@
+/*
+ * Clean Lily58: QWERTY, persistent layers, home row and one-shot modifiers.
+ * Position names and design: docs/key-positions.md and docs/keymap-draft.md.
+ * Every layer explicitly includes the same Escape/menu/thumb anchors.
+ */
+
+// Twice ZMK v0.3's default pointer (600) and scroll (10) speeds.
+#define ZMK_POINTING_DEFAULT_MOVE_VAL 1200
+#define ZMK_POINTING_DEFAULT_SCRL_VAL 20
+
+#include <behaviors.dtsi>
+#include <dt-bindings/zmk/bt.h>
+#include <dt-bindings/zmk/keys.h>
+#include <dt-bindings/zmk/outputs.h>
+#include <dt-bindings/zmk/pointing.h>
+
+#define BASE        0
+#define MENU        1
+#define SYMBOLS     2
+#define NUMBERS     3
+#define KEYPAD      4
+#define FUNCTION    5
+#define NAVIGATION  6
+#define MOUSE       7
+#define WINDOWS     8
+#define SYSTEM      9
+
+/ {
+    behaviors {
+        hml: home_row_left {
+            compatible = "zmk,behavior-hold-tap";
+            display-name = "Left Home Row Mod";
+            #binding-cells = <2>;
+            flavor = "balanced";
+            tapping-term-ms = <280>;
+            require-prior-idle-ms = <150>;
+            quick-tap-ms = <175>;
+            bindings = <&kp>, <&kp>;
+            // All right-half positions, including the inner key and thumbs.
+            hold-trigger-key-positions = <6 7 8 9 10 11 18 19 20 21 22 23 30 31 32 33 34 35 43 44 45 46 47 48 49 54 55 56 57>;
+            hold-trigger-on-release;
+        };
+
+        hmr: home_row_right {
+            compatible = "zmk,behavior-hold-tap";
+            display-name = "Right Home Row Mod";
+            #binding-cells = <2>;
+            flavor = "balanced";
+            tapping-term-ms = <280>;
+            require-prior-idle-ms = <150>;
+            quick-tap-ms = <175>;
+            bindings = <&kp>, <&kp>;
+            // All left-half positions, including the inner key and thumbs.
+            hold-trigger-key-positions = <0 1 2 3 4 5 12 13 14 15 16 17 24 25 26 27 28 29 36 37 38 39 40 41 42 50 51 52 53>;
+            hold-trigger-on-release;
+        };
+
+        osm: one_shot_modifier {
+            compatible = "zmk,behavior-sticky-key";
+            display-name = "One-Shot Modifier";
+            #binding-cells = <1>;
+            bindings = <&kp>;
+            release-after-ms = <5000>;
+            lazy;
+            ignore-modifiers;
+        };
+    };
+
+    macros {
+        compose_home: compose_then_base {
+            compatible = "zmk,behavior-macro";
+            display-name = "Compose then Base";
+            #binding-cells = <0>;
+            wait-ms = <0>;
+            tap-ms = <10>;
+            bindings = <&kp K_APP>, <&to BASE>;
+        };
+    };
+
+    keymap {
+        compatible = "zmk,keymap";
+
+        // 0: Base
+        base_layer {
+            label = "Base";
+            bindings = <
+                &kp GRAVE  &kp N1  &kp N2  &kp N3  &kp N4  &kp N5  &kp N6  &kp N7  &kp N8  &kp N9  &kp N0  &kp MINUS
+                &kp BSLH  &kp Q  &kp W  &kp E  &kp R  &kp T  &kp Y  &kp U  &kp I  &kp O  &kp P  &kp APOS
+                &kp ESC  &hml LSHFT A  &hml LGUI S  &hml LALT D  &hml LCTRL F  &hml RALT G  &hmr RALT H  &hmr RCTRL J  &hmr LALT K  &hmr RGUI L  &hmr RSHFT SEMI  &to MENU
+                &none  &kp Z  &kp X  &kp C  &kp V  &kp B  &none  &none  &kp N  &kp M  &kp COMMA  &kp DOT  &kp FSLH  &none
+                                    &none  &kp TAB  &kp BSPC  &kp SPACE  &kp ENTER  &to BASE  &kp DEL  &none
+            >;
+        };
+
+        // 1: Menu
+        menu_layer {
+            label = "Menu";
+            bindings = <
+                &none  &none  &none  &none  &none  &none  &none  &none  &none  &none  &none  &none
+                &none  &none  &none  &none  &none  &none  &none  &none  &none  &none  &to KEYPAD  &none
+                &kp ESC  &none  &to SYMBOLS  &none  &to FUNCTION  &none  &osm RALT  &osm LCTRL  &osm LALT  &osm LGUI  &osm LSHFT  &to MENU
+                &none  &none  &none  &compose_home  &to NAVIGATION  &to SYSTEM  &none  &none  &to NUMBERS  &to MOUSE  &none  &none  &none  &none
+                                    &none  &kp TAB  &kp BSPC  &kp SPACE  &to WINDOWS  &to BASE  &kp DEL  &none
+            >;
+        };
+
+        // 2: Symbols
+        symbols_layer {
+            label = "Symbols";
+            bindings = <
+                &none  &none  &none  &none  &none  &none  &none  &none  &none  &none  &none  &none
+                &none  &kp EXCL  &kp HASH  &kp DLLR  &kp PRCNT  &kp AMPS  &kp BSLH  &kp LPAR  &kp RPAR  &kp ASTERISK  &kp QMARK  &kp DOT
+                &kp ESC  &kp FSLH  &kp AT  &kp PIPE  &kp EQUAL  &kp UNDER  &kp GRAVE  &kp LBKT  &kp RBKT  &kp APOS  &kp DQT  &to MENU
+                &none  &kp CARET  &kp SEMI  &kp COMMA  &kp MINUS  &kp PLUS  &none  &none  &kp TILDE  &kp LBRC  &kp RBRC  &kp LESS_THAN  &kp GREATER_THAN  &kp COLON
+                                    &none  &kp TAB  &kp BSPC  &kp SPACE  &kp ENTER  &to BASE  &kp DEL  &none
+            >;
+        };
+
+        // 3: Numbers
+        numbers_layer {
+            label = "Numbers";
+            bindings = <
+                &none  &none  &none  &none  &none  &none  &none  &none  &none  &none  &none  &none
+                &none  &none  &none  &none  &none  &none  &kp MINUS  &kp N7  &kp N8  &kp N9  &kp PLUS  &none
+                &kp ESC  &kp LSHFT  &kp LGUI  &kp LALT  &kp LCTRL  &kp RALT  &kp N0  &kp N4  &kp N5  &kp N6  &kp EQUAL  &to MENU
+                &none  &none  &none  &none  &none  &none  &none  &none  &kp DOT  &kp N1  &kp N2  &kp N3  &kp FSLH  &none
+                                    &none  &kp TAB  &kp BSPC  &kp SPACE  &kp ENTER  &to BASE  &kp DEL  &none
+            >;
+        };
+
+        // 4: Keypad
+        keypad_layer {
+            label = "Keypad";
+            bindings = <
+                &none  &none  &none  &none  &none  &none  &none  &none  &none  &none  &none  &none
+                &none  &none  &none  &none  &kp KP_ENTER  &kp KP_NLCK  &kp KP_MINUS  &kp KP_N7  &kp KP_N8  &kp KP_N9  &kp KP_PLUS  &none
+                &kp ESC  &kp LSHFT  &kp LGUI  &kp LALT  &kp LCTRL  &kp RALT  &kp KP_N0  &kp KP_N4  &kp KP_N5  &kp KP_N6  &kp KP_EQUAL  &to MENU
+                &none  &none  &none  &none  &none  &none  &none  &none  &kp KP_DOT  &kp KP_N1  &kp KP_N2  &kp KP_N3  &kp KP_DIVIDE  &none
+                                    &none  &kp TAB  &kp BSPC  &kp SPACE  &kp ENTER  &to BASE  &kp DEL  &none
+            >;
+        };
+
+        // 5: Function
+        function_layer {
+            label = "Function";
+            bindings = <
+                &none  &none  &none  &none  &none  &none  &none  &none  &none  &none  &none  &none
+                &none  &none  &none  &none  &none  &none  &kp F10  &kp F7  &kp F8  &kp F9  &kp PSCRN  &none
+                &kp ESC  &kp LSHFT  &kp LGUI  &kp LALT  &kp LCTRL  &kp RALT  &kp F11  &kp F4  &kp F5  &kp F6  &none  &to MENU
+                &none  &none  &none  &none  &none  &none  &none  &none  &kp F12  &kp F1  &kp F2  &kp F3  &none  &none
+                                    &none  &kp TAB  &kp BSPC  &kp SPACE  &kp ENTER  &to BASE  &kp DEL  &none
+            >;
+        };
+
+        // 6: Navigation
+        navigation_layer {
+            label = "Navigation";
+            bindings = <
+                &none  &none  &none  &none  &none  &none  &none  &none  &none  &none  &none  &none
+                &none  &none  &none  &none  &none  &none  &none  &kp PG_UP  &kp UP  &kp PG_DN  &none  &none
+                &kp ESC  &kp LSHFT  &kp LGUI  &kp LALT  &kp LCTRL  &kp RALT  &kp HOME  &kp LEFT  &kp DOWN  &kp RIGHT  &kp END  &to MENU
+                &none  &none  &none  &none  &none  &none  &none  &none  &kp INS  &none  &none  &none  &none  &none
+                                    &none  &kp TAB  &kp BSPC  &kp SPACE  &kp ENTER  &to BASE  &kp DEL  &none
+            >;
+        };
+
+        // 7: Mouse
+        mouse_layer {
+            label = "Mouse";
+            bindings = <
+                &none  &none  &none  &none  &none  &none  &none  &none  &none  &none  &none  &none
+                &none  &mkp MB4  &mkp MB2  &mmv MOVE_UP  &mkp MB1  &mkp MB3  &mkp MB5  &none  &msc SCRL_UP  &none  &none  &none
+                &kp ESC  &none  &mmv MOVE_LEFT  &mmv MOVE_DOWN  &mmv MOVE_RIGHT  &none  &none  &msc SCRL_LEFT  &msc SCRL_DOWN  &msc SCRL_RIGHT  &none  &to MENU
+                &none  &kp LSHFT  &kp LGUI  &kp LALT  &kp LCTRL  &kp RALT  &none  &none  &kp RALT  &kp RCTRL  &kp LALT  &kp RGUI  &kp RSHFT  &none
+                                    &none  &kp TAB  &kp BSPC  &kp SPACE  &kp ENTER  &to BASE  &kp DEL  &none
+            >;
+        };
+
+        // 8: Windows
+        windows_layer {
+            label = "Windows";
+            bindings = <
+                &none  &none  &none  &none  &none  &none  &kp LG(N1)  &kp LG(N2)  &kp LG(N3)  &kp LG(N4)  &kp LG(N5)  &kp LG(MINUS)
+                &none  &kp LG(LC(LEFT))  &kp LG(LC(RIGHT))  &kp LG(LA(G))  &kp LG(LA(LEFT))  &kp LG(G)  &kp LG(LS(LEFT))  &kp LG(LS(DOWN))  &kp LG(LS(UP))  &kp LG(LS(RIGHT))  &kp LG(F)  &kp LG(EQUAL)
+                &kp ESC  &none  &none  &kp LG(LC(LA(F14)))  &kp LG(LC(LA(F13)))  &kp LG(LC(F))  &kp LG(LEFT)  &kp LG(DOWN)  &kp LG(UP)  &kp LG(RIGHT)  &kp LC(LA(TAB))  &to MENU
+                &none  &none  &none  &none  &none  &none  &none  &none  &kp LG(LS(LA(N1)))  &kp LG(LS(LA(N2)))  &kp LG(LS(LA(N3)))  &kp LG(LS(LA(N4)))  &kp LG(LS(LA(N5)))  &none
+                                    &none  &kp TAB  &kp BSPC  &kp SPACE  &kp ENTER  &to BASE  &kp DEL  &none
+            >;
+        };
+
+        // 9: System
+        system_layer {
+            label = "System";
+            bindings = <
+                &bt BT_CLR  &none  &none  &none  &none  &bootloader  &bootloader  &none  &none  &none  &none  &none
+                &none  &bt BT_SEL 0  &bt BT_SEL 1  &bt BT_SEL 2  &bt BT_SEL 3  &bt BT_SEL 4  &kp K_PREV  &kp K_PLAY_PAUSE  &kp K_NEXT  &kp K_MUTE  &compose_home  &none
+                &kp ESC  &kp LSHFT  &kp LGUI  &kp LALT  &kp LCTRL  &kp RALT  &kp K_VOL_DN  &kp K_VOL_UP  &kp C_BRI_DN  &kp C_BRI_UP  &kp CAPS  &to MENU
+                &none  &none  &none  &none  &none  &none  &none  &none  &out OUT_USB  &out OUT_BLE  &bt BT_PRV  &bt BT_NXT  &kp KP_NLCK  &none
+                                    &none  &kp TAB  &kp BSPC  &kp SPACE  &kp ENTER  &to BASE  &kp DEL  &none
+            >;
+        };
+    };
+};

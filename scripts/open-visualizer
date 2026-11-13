@@ -1,0 +1,14 @@
+#!/usr/bin/env python3
+"""Refresh the clean keymap reference and open it as an Omarchy app window."""
+
+import os
+from pathlib import Path
+import subprocess
+import sys
+
+ROOT = Path(__file__).resolve().parents[1]
+
+if __name__ == "__main__":
+    subprocess.run([sys.executable, str(ROOT / "scripts/render-keymap")], check=True)
+    url = (ROOT / "docs/clean-keymap.html").as_uri()
+    os.execvp("omarchy-launch-webapp", ["omarchy-launch-webapp", url])

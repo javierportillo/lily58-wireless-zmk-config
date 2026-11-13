@@ -1,0 +1,217 @@
+#!/usr/bin/env python3
+"""Build and flash the USB-connected left Lily58; Linux, Python stdlib only."""
+
+import argparse
+import errno
+import fcntl
+import hashlib
+import json
+import os
+from pathlib import Path
+import re
+import shutil
+import struct
+import subprocess
+import sys
+import termios
+import time
+
+REPO = Path(__file__).resolve().parent.parent
+SERIAL = "23E5F50B0A98298E"
+BOARD = "nRF52840-nicenano-v2"
+FIRMWARE = REPO / "firmware/lily58_left-nice_nano_v2-zmk.uf2"
+
+
+def firmware_for_keymap(name):
+    if not re.fullmatch(r"[a-zA-Z0-9][a-zA-Z0-9_-]*", name):
+        raise ValueError("Keymap must be a name from config/*.keymap, without its extension")
+    if not (REPO / "config" / (name + ".keymap")).is_file():
+        raise ValueError(f"Unknown keymap: {name}")
+    return FIRMWARE if name == "lily58" else FIRMWARE.parent / name / FIRMWARE.name
+
+
+def run(*args):
+    return subprocess.check_output(args, text=True).strip()
+
+
+def validate_uf2(data):
+    if not data or len(data) % 512:
+        raise ValueError("Firmware is empty or has an invalid UF2 size")
+    for number, offset in enumerate(range(0, len(data), 512)):
+        block = data[offset:offset + 512]
+        a, b, flags, address, size, index, total, family = struct.unpack_from("<8I", block)
+        if ((a, b) != (0x0A324655, 0x9E5D5157)
+                or struct.unpack_from("<I", block, 508)[0] != 0x0AB16F30
+                or not flags & 0x2000 or flags & 0x1
+                or family != 0xADA52840 or size != 256
+                or index != number or total != len(data) // 512
+                or address != 0x26000 + number * 256):
+            raise ValueError(f"Invalid nice!nano application UF2 block {number}")
+
+
+def usb_device(serial, vid, pid):
+    for device in Path("/sys/bus/usb/devices").iterdir():
+        try:
+            if ((device / "serial").read_text().strip() == serial
+                    and (device / "idVendor").read_text().strip() == vid
+                    and (device / "idProduct").read_text().strip() == pid):
+                return device
+        except (FileNotFoundError, NotADirectoryError):
+            pass
+    return None
+
+
+def touch_bootloader(serial):
+    if not usb_device(serial, "1d50", "615e"):
+        raise RuntimeError("The configured left Lily58 is not connected in USB keyboard mode")
+    port = Path(f"/dev/serial/by-id/usb-ZMK_Project_Lily58_{serial}-if00")
+    if not os.access(port, os.R_OK | os.W_OK):
+        raise RuntimeError(
+            f"No serial access to {port}. Install scripts/70-lily58-bootloader.rules "
+            "as described in the README, or use --bootstrap for a manual reset."
+        )
+    fd = os.open(port, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+    try:
+        # Block new serial users (for example Studio) during this reset request.
+        fcntl.ioctl(fd, termios.TIOCEXCL)
+        attrs = termios.tcgetattr(fd)
+        attrs[0] = attrs[1] = attrs[3] = 0
+        attrs[2] = termios.CS8 | termios.CREAD | termios.CLOCAL | termios.HUPCL
+        # Force a rate transition even if a previous session left it at 1200.
+        attrs[4] = attrs[5] = termios.B115200
+        termios.tcsetattr(fd, termios.TCSANOW, attrs)
+        fcntl.ioctl(fd, termios.TIOCMBIS, struct.pack("I", termios.TIOCM_DTR))
+        attrs[4] = attrs[5] = termios.B1200
+        termios.tcsetattr(fd, termios.TCSANOW, attrs)
+        time.sleep(0.15)
+        fcntl.ioctl(fd, termios.TIOCMBIC, struct.pack("I", termios.TIOCM_DTR))
+    finally:
+        os.close(fd)
+    print("Requested bootloader mode over USB.", flush=True)
+
+
+def boot_disk(serial):
+    disks = json.loads(run("lsblk", "-J", "-o", "PATH,TRAN,SERIAL,LABEL,FSTYPE,MOUNTPOINTS"))
+
+    def walk(nodes, parent_serial=None, parent_usb=False):
+        for node in nodes:
+            current_serial = node.get("serial") or parent_serial
+            usb = node.get("tran") == "usb" or parent_usb
+            if (usb and current_serial == serial and node.get("label") == "NICENANO"
+                    and node.get("fstype") == "vfat"):
+                return node
+            found = walk(node.get("children", []), current_serial, usb)
+            if found:
+                return found
+        return None
+
+    return walk(disks["blockdevices"])
+
+
+def wait_for(probe, timeout, description):
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        result = probe()
+        if result:
+            return result
+        time.sleep(0.5)
+    raise RuntimeError(f"Timed out waiting for {description}")
+
+
+def mount_boot_disk(serial, disk):
+    mounts = [m for m in disk.get("mountpoints", []) if m]
+    if not mounts:
+        print(run("udisksctl", "mount", "--block-device", disk["path"], "--no-user-interaction"))
+        disk = boot_disk(serial)
+        mounts = [m for m in disk.get("mountpoints", []) if m] if disk else []
+    if not mounts:
+        raise RuntimeError("Bootloader drive has no mount point")
+    mount = Path(mounts[0])
+    props = run("udevadm", "info", "--query=property", "--name", disk["path"])
+    if (f"ID_SERIAL_SHORT={serial}" not in props.splitlines()
+            or f"Board-ID: {BOARD}" not in (mount / "INFO_UF2.TXT").read_text()):
+        raise RuntimeError("Bootloader identity does not match the configured left controller")
+    return mount
+
+
+def keyboard_hid(serial):
+    if not usb_device(serial, "1d50", "615e"):
+        return None
+    for hid in Path("/sys/bus/hid/devices").iterdir():
+        try:
+            info = (hid / "uevent").read_text().splitlines()
+            if f"HID_UNIQ={serial}" not in info or "HID_ID=0003:00001D50:0000615E" not in info:
+                continue
+            for device in hid.glob("input/input*"):
+                words = (device / "capabilities/key").read_text().split()
+                bits = int("".join(f"{int(w, 16):0{struct.calcsize('L') * 2}x}" for w in words), 16)
+                events = list(device.glob("event*"))
+                # Linux KEY_A and KEY_ENTER, rather than only a mouse/media HID.
+                if bits & (1 << 30) and bits & (1 << 28) and events:
+                    return events[0].name
+        except FileNotFoundError:
+            pass
+    return None
+
+
+def flash(mount, data, serial):
+    backups = REPO / "firmware/backups"
+    backups.mkdir(exist_ok=True)
+    backup = backups / f"left-{serial}-{time.time_ns()}.uf2"
+    shutil.copyfile(mount / "CURRENT.UF2", backup)
+    print(f"Saved previous firmware: {backup.relative_to(REPO)}", flush=True)
+    written = 0
+    try:
+        with (mount / "firmware.uf2").open("wb", buffering=0) as destination:
+            while written < len(data):
+                count = destination.write(data[written:written + 65536])
+                if not count:
+                    raise RuntimeError("USB firmware write stopped before completion")
+                written += count
+            os.fsync(destination.fileno())
+    except OSError as error:
+        # UF2 bootloaders disconnect immediately after the final block. Accept
+        # that sync error only after every byte was written AND HID returns.
+        if written != len(data) or error.errno not in (errno.EIO, errno.ENODEV, errno.ENOENT):
+            raise
+        print("Bootloader disconnected during final sync; checking keyboard return.", flush=True)
+    event = wait_for(lambda: keyboard_hid(serial), 45, "the same device to return as a USB keyboard")
+    print(f"Flashed left firmware ({len(data):,} bytes). USB keyboard verified: /dev/input/{event}")
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--bootstrap", action="store_true", help="wait for manual double-tap reset (first install)")
+    parser.add_argument("--no-build", action="store_true", help="flash the existing local left UF2")
+    parser.add_argument("--keymap", default="lily58", help="name in config/*.keymap (default: original lily58)")
+    parser.add_argument("--serial", default=SERIAL, help="expected left controller USB serial")
+    parser.add_argument("--timeout", type=float, default=120, help="seconds to wait for the bootloader drive")
+    args = parser.parse_args()
+    if args.timeout <= 0:
+        parser.error("--timeout must be positive")
+    firmware = firmware_for_keymap(args.keymap)
+    (REPO / ".local-build").mkdir(exist_ok=True)
+    # Separate lock from the builder: build first while holding this flash lock.
+    with (REPO / ".local-build/flash.lock").open("w") as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        if not args.no_build:
+            subprocess.run([str(REPO / "scripts/build-local"), "left", "--keymap", args.keymap], check=True)
+        data = firmware.read_bytes()
+        validate_uf2(data)
+        print(f"Selected keymap: {args.keymap}; artifact: {firmware.relative_to(REPO)}", flush=True)
+        print("Left UF2 SHA256:", hashlib.sha256(data).hexdigest(), flush=True)
+        disk = boot_disk(args.serial)
+        if not disk:
+            if args.bootstrap:
+                print("Double-tap the LEFT reset button now; waiting for its USB drive...", flush=True)
+            else:
+                touch_bootloader(args.serial)
+            disk = wait_for(lambda: boot_disk(args.serial), args.timeout, "the left bootloader drive")
+        flash(mount_boot_disk(args.serial, disk), data, args.serial)
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except (OSError, ValueError, RuntimeError, subprocess.CalledProcessError) as error:
+        sys.exit(f"Flash failed: {error}")

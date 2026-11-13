@@ -1,0 +1,4 @@
+name: lily58_usb_bootloader
+build:
+  cmake: module
+  kconfig: module/Kconfig
