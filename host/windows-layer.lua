@@ -26,5 +26,7 @@ o.rebind("SUPER + SHIFT + RIGHT", "Swap right (column in scrolling)", horizontal
 
 -- Dedicated, previously unbound chords for the next monitor (not a direction).
 -- Omarchy's helpers preserve monitor-local workspace ownership when moving.
-o.bind("SUPER + CTRL + ALT + F13", "Move window to next monitor", o.workspaces.move_window_to_monitor("+1"))
-o.bind("SUPER + CTRL + ALT + F14", "Move workspace to next monitor", o.workspaces.move_to_monitor("+1"))
+-- XKB's evdev map names physical F13/F14 XF86Tools/XF86Launch5. Match the
+-- physical XKB codes (Linux KEY_F13/F14 + 8), independent of those keysyms.
+o.bind("SUPER + CTRL + ALT + code:191", "Move window to next monitor", o.workspaces.move_window_to_monitor("+1"))
+o.bind("SUPER + CTRL + ALT + code:192", "Move workspace to next monitor", o.workspaces.move_to_monitor("+1"))

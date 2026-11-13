@@ -45,8 +45,12 @@ for _, direction in ipairs({ {"LEFT", "l"}, {"RIGHT", "r"} }) do
     assert(#calls == count, "No active window must be a no-op")
   end
 end
-assert(bindings["SUPER + CTRL + ALT + F13"].kind == "move window")
-assert(bindings["SUPER + CTRL + ALT + F14"].kind == "move workspace")
-assert(bindings["SUPER + CTRL + ALT + F13"].value == "+1")
-assert(bindings["SUPER + CTRL + ALT + F14"].value == "+1")
+-- XKB maps physical F13/F14 to XF86Tools/XF86Launch5 on this host.
+-- Bind their XKB keycodes, so the firmware's HID keys still trigger the action.
+assert(bindings["SUPER + CTRL + ALT + code:191"], "Physical F13 must match regardless of its keysym")
+assert(bindings["SUPER + CTRL + ALT + code:192"], "Physical F14 must match regardless of its keysym")
+assert(bindings["SUPER + CTRL + ALT + code:191"].kind == "move window")
+assert(bindings["SUPER + CTRL + ALT + code:192"].kind == "move workspace")
+assert(bindings["SUPER + CTRL + ALT + code:191"].value == "+1")
+assert(bindings["SUPER + CTRL + ALT + code:192"].value == "+1")
 print("Windows host routing: scrolling, other layouts, floating, no window, monitor actions passed")

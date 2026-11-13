@@ -76,6 +76,17 @@ call Omarchy's monitor-scoped `move_window_to_monitor("+1")` and
 The remaining keys use existing Omarchy shortcuts, including silent workspace
 moves and group controls.
 
+The host must match F13/F14 by physical XKB codes **191/192**, not by the literal
+F13/F14 keysyms. The host's evdev XKB map translates those physical keys into
+`XF86Tools` and `XF86Launch5`, so literal F13/F14 bindings did nothing even
+though direct monitor-helper calls worked. This was fixed after installation
+on 2026-11-13. Both actual input paths were verified with a temporary uinput
+keyboard sending Linux KEY_F13/KEY_F14 plus Super+Ctrl+Alt: window transfer
+changed monitors, and workspace transfer changed monitors with focus following.
+The workspace check used an isolated temporary terminal/workspace; the original
+window focus and monitor workspaces were restored afterward. No firmware change
+or reflash was required.
+
 After host edits, run `lua tests/test_windows_layer.lua`, `hyprctl reload`, and
 `hyprctl configerrors`. The Lua test covers Scrolling, other layouts, floating
 windows, no focused window, and monitor-helper selection. It does not substitute
